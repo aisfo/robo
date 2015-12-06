@@ -1,5 +1,7 @@
 #include <SoftwareSerial.h>
 #include <Adafruit_PWMServoDriver.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BNO055.h>
 
 #define SERVOMIN  150
 #define SERVOMAX  570
@@ -7,36 +9,36 @@
 #define DEGTOSEC 0.0088
 #define PULSELEN 0.00406901042 // 1000 / FREQUENCY / 4096
 
-SoftwareSerial Genotronex(11, 10); // RX, TX
+SoftwareSerial bluetooth(11, 10); // RX, TX
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
-
+Adafruit_BNO055 bno = Adafruit_BNO055(55);
 
 class Joint {
-    uint8_t _pin;
-    double _zeroPos;
-    uint16_t _curPos;
-    bool _positive;
+  uint8_t _pin;
+  float _zeroPulse;
+  uint16_t _curPos;
+  bool _positive;
 
-    public:
+  public:
 
-      Joint(uint8_t pin, double zeroPos, bool positive) {
-        _pin = pin;
-        _zeroPos = zeroPos;
-        _positive = positive;
-        _curPos = zeroPos;
-      }
+    Joint(uint8_t pin, float zeroPulse, bool positive) {
+      _pin = pin;
+      _zeroPulse = zeroPulse;
+      _positive = positive;
+      //_curPos = 0;
+    }
+
+    void move(float degree) { 
+      float pulse = degree * DEGTOSEC;
+      if (!_positive) pulse *= -1;
+      
+      pulse /= PULSELEN;
+      pulse += _zeroPulse;
   
-      void move(float degree) { 
-        double pulse = (double)degree * DEGTOSEC;
-        if (!_positive) pulse *= -1;
-        pulse /= PULSELEN;
-        
-        pulse += _zeroPos;
-    
-        if (pulse < SERVOMIN || pulse > SERVOMAX) return;
-    
-        pwm.setPWM(_pin, 0, pulse);
-      }
+      if (pulse < SERVOMIN || pulse > SERVOMAX) return;
+  
+      pwm.setPWM(_pin, 0, pulse);
+    }
 };
 
 //void rotate(int newPosition[]) {
@@ -66,12 +68,16 @@ class Joint {
 //
 //}
 
-
 void setup() {
-  Genotronex.begin(9600);
   Serial.begin(9600);
+  bluetooth.begin(9600);
   pwm.begin();
+  bno.begin();
+
+  delay(1000);
+
   pwm.setPWMFreq(FREQUENCY);
+  bno.setExtCrystalUse(true);
 
   Joint nw0(13, 154, true);
   Joint nw1(14, 565, false);
@@ -108,10 +114,10 @@ void setup() {
 
 
 void loop() {
-  if (Genotronex.available()) {
-    int in0 = Genotronex.parseInt();
-    int in1 = Genotronex.parseInt();
-    int in2 = Genotronex.parseInt();
+  if (bluetooth.available()) {
+    int in0 = bluetooth.parseInt();
+    int in1 = bluetooth.parseInt();
+    int in2 = bluetooth.parseInt();
 //    int input[16] = {
 //      0, 0, 0,
 //      0, 0, 0,
@@ -122,4 +128,17 @@ void loop() {
 //
 //    rotate(input);
   }
+
+  sensors_event_t event; 
+  bno.getEvent(&event);
+  
+  Serial.print("X: ");
+  Serial.print(event.orientation.x, 4);
+  Serial.print("\tY: ");
+  Serial.print(event.orientation.y, 4);
+  Serial.print("\tZ: ");
+  Serial.print(event.orientation.z, 4);
+  Serial.println("");
+  
+  delay(100);
 }
