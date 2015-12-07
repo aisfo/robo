@@ -42,7 +42,7 @@ class Joint {
       _pin = pin;
       _zeroPulse = zeroPulse;
       _positive = positive;   
-      _currentPosition = initialPosition;
+      moveTo(initialPosition);
     }
 
     void moveTo(float degree) { 
@@ -87,21 +87,21 @@ void setup() {
   bno.setExtCrystalUse(true);
 
   
-  joints[ne0] = Joint(2, 565, true, -45);
-  joints[ne1] = Joint(1, 150, true, 120);
-  joints[ne2] = Joint(0, 170, false, -30);
+  joints[ne0] = Joint(2, 560, true, -180);
+  joints[ne1] = Joint(1, 150, true, 100);
+  joints[ne2] = Joint(0, 170, false, -20);
 
-  joints[se0] = Joint(6, 154, true, 45);
-  joints[se1] = Joint(5, 550, false, 120);
-  joints[se2] = Joint(4, 535, true, -30);
+  joints[se0] = Joint(6, 154, true, 180);
+  joints[se1] = Joint(5, 555, false, 100);
+  joints[se2] = Joint(4, 535, true, -20);
 
-  joints[sw0] = Joint(8, 540, true, -45);
-  joints[sw1] = Joint(9, 170, true, 120);
-  joints[sw2] = Joint(11, 180, false, -30);
+  joints[sw0] = Joint(8, 540, true, -180);
+  joints[sw1] = Joint(9, 170, true, 100);
+  joints[sw2] = Joint(11, 180, false, -20);
 
-  joints[nw0] = Joint(13, 154, true, 45);
-  joints[nw1] = Joint(14, 565, false, 120);
-  joints[nw2] = Joint(15, 524, true, -30);
+  joints[nw0] = Joint(13, 154, true, 180);
+  joints[nw1] = Joint(14, 560, false, 100);
+  joints[nw2] = Joint(15, 524, true, -20);
 }
 
 
@@ -121,8 +121,6 @@ void loop() {
     uint8_t command = bluetooth.parseInt();
     uint8_t jointId;
     float value;
-
-    Serial.println(command);
     
     switch (command) {
       case MOVE_TO:
