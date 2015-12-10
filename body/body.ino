@@ -22,8 +22,9 @@
 #define nw1 10
 #define nw2 11
 
-#define MOVE_TO 1
-#define MOVE_BY 2
+#define RESET 1
+#define MOVE_TO 2
+#define MOVE_BY 3
 
 
 class Joint {
@@ -34,15 +35,11 @@ class Joint {
   static Adafruit_PWMServoDriver _pwm;
 
   public:
-    Joint() {
-      _pin = UINT8_MAX;
-    }
-
-    Joint(uint8_t pin, float zeroPulse, bool positive, float initialPosition) {
+    Joint(uint8_t pin, float zeroPulse, bool positive) {
       _pin = pin;
       _zeroPulse = zeroPulse;
-      _positive = positive;   
-      moveTo(initialPosition);
+      _positive = positive; 
+      _currentPosition = 0;  
     }
 
     void moveTo(float degree) { 
@@ -74,7 +71,42 @@ Adafruit_PWMServoDriver Joint::_pwm = Adafruit_PWMServoDriver();
 
 SoftwareSerial bluetooth(11, 10); // RX, TX
 Adafruit_BNO055 bno = Adafruit_BNO055(55);
-Joint joints[12];
+
+Joint joints[12] {
+  Joint(2, 565, true), //ne0
+  Joint(1, 150, true), //ne1
+  Joint(0, 170, false),//ne2
+
+  Joint(6, 159, true), //se0
+  Joint(5, 555, false),//se1
+  Joint(4, 535, true), //se2
+
+  Joint(8, 540, true),  //sw0
+  Joint(9, 170, true),  //sw1
+  Joint(11, 180, false),//sw2
+
+  Joint(13, 154, true), //nw0
+  Joint(14, 560, false),//nw1
+  Joint(15, 524, true)  //nw2
+};
+
+void reset() {
+  joints[ne0].moveTo(0);
+  joints[ne1].moveTo(140);
+  joints[ne2].moveTo(-50);
+
+  joints[se0].moveTo(0);
+  joints[se1].moveTo(140);
+  joints[se2].moveTo(-50);
+
+  joints[sw0].moveTo(0);
+  joints[sw1].moveTo(140);
+  joints[sw2].moveTo(-50);
+
+  joints[nw0].moveTo(0);
+  joints[nw1].moveTo(140);
+  joints[nw2].moveTo(-50);
+}
 
 void setup() {
   Serial.begin(9600);
@@ -86,22 +118,7 @@ void setup() {
   
   bno.setExtCrystalUse(true);
 
-  
-  joints[ne0] = Joint(2, 560, true, -180);
-  joints[ne1] = Joint(1, 150, true, 100);
-  joints[ne2] = Joint(0, 170, false, -20);
-
-  joints[se0] = Joint(6, 154, true, 180);
-  joints[se1] = Joint(5, 555, false, 100);
-  joints[se2] = Joint(4, 535, true, -20);
-
-  joints[sw0] = Joint(8, 540, true, -180);
-  joints[sw1] = Joint(9, 170, true, 100);
-  joints[sw2] = Joint(11, 180, false, -20);
-
-  joints[nw0] = Joint(13, 154, true, 180);
-  joints[nw1] = Joint(14, 560, false, 100);
-  joints[nw2] = Joint(15, 524, true, -20);
+  reset();
 }
 
 
@@ -127,6 +144,10 @@ void loop() {
       case MOVE_BY:
         jointId = bluetooth.parseInt();
         value = bluetooth.parseFloat();
+        break;
+      case RESET:
+        reset();
+        return;
     }
 
     if (jointId < 0 || jointId > 11) return;
@@ -141,5 +162,5 @@ void loop() {
     }
   }
 
-  delay(100);
+  delay(50);
 }

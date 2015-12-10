@@ -19,6 +19,7 @@ def log(msg):
 
 
 # commands: 
+# 0 - RESET()
 # 1 - MOVE_TO(joint_id, value)
 # 2 - MOVE_BY(joint_id, value)
 def send(msg):
@@ -26,9 +27,27 @@ def send(msg):
     msg += "\n"
     connection.send(msg.encode())
 
+def reset():
+    send("1")
+
 def moveTo(jointId, value):
-    send("1 {0} {1}".format(jointId, value))
+    send("2 {0} {1}".format(jointId, value))
 
 def moveBy(jointId, value):
-    send("2 {0} {1}".format(jointId, value))
+    send("3 {0} {1}".format(jointId, value))
+
+
+
+NE0 = 0
+NE1 = 1
+NE2 = 2 
+SE0 = 3
+SE1 = 4
+SE2 = 5 
+SW0 = 6 
+SW1 = 7
+SW2 = 8 
+NW0 = 9
+NW1 = 10
+NW2 = 11
 
