@@ -1,4 +1,3 @@
-# robo
-## Quadropod
+# Quadropod
 
 Toy project for learning robotics and AI. Work in progress...
