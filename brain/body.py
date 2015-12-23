@@ -12,7 +12,8 @@ def connect():
     log("Connected to body at {0} :: {1}".format(bd_addr, port))
 
 def close():
-    connection.close()
+    log("Disconnecting from body...")
+    print(connection.close())
 
 def log(msg):
     print("BODY [LOG] :: {}".format(msg))
@@ -36,7 +37,25 @@ def moveTo(jointId, value):
 def moveBy(jointId, value):
     send("3 {0} {1}".format(jointId, value))
 
+def read():
+    send("4")
+    values = []
+    temp = ""
+    start = False
+    while(True):
+        data = connection.recv(1)
+        if data == b'^':
+            start = True
+        elif data == b':':
+            values.append(temp)
+            temp = ""
+        elif data == b'&':
+            values.append(temp)
+            break
+        elif start:
+            temp += data.decode("utf-8")
 
+    return values
 
 NE0 = 0
 NE1 = 1

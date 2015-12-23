@@ -25,6 +25,7 @@
 #define RESET 1
 #define MOVE_TO 2
 #define MOVE_BY 3
+#define READ 4
 
 
 class Joint {
@@ -123,16 +124,6 @@ void setup() {
 
 
 void loop() {
-  //  sensors_event_t event; 
-  //  bno.getEvent(&event);
-    
-  //  Serial.print("Azimuth: ");
-  //  Serial.print(event.orientation.x, 4);
-  //  Serial.print("\tPitch: ");
-  //  Serial.print(event.orientation.y, 4);
-  //  Serial.print("\tRoll: ");
-  //  Serial.print(event.orientation.z, 4);
-  //  Serial.println("");
   
   if (bluetooth.available()) {
     uint8_t command = bluetooth.parseInt();
@@ -148,6 +139,17 @@ void loop() {
       case RESET:
         reset();
         return;
+      case READ:
+        sensors_event_t event; 
+        bno.getEvent(&event);
+        bluetooth.print("^");
+        bluetooth.print(event.orientation.x, 4);
+        bluetooth.print(":");
+        bluetooth.print(event.orientation.y, 4);
+        bluetooth.print(":");
+        bluetooth.print(event.orientation.z, 4);
+        bluetooth.print("&");
+        return;
     }
 
     if (jointId < 0 || jointId > 11) return;
@@ -162,5 +164,5 @@ void loop() {
     }
   }
 
-  delay(50);
+  delay(1000);
 }
