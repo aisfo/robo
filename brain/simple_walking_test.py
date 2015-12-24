@@ -1,12 +1,12 @@
-import body
 from time import sleep
 
+import script
+import body
 
-try:
-    body.connect()
+def simple_walking():
     body.reset()
     
-    for i in range(0,5):
+    for i in range(0,2):
 
         sleep(0.2)
 
@@ -31,8 +31,6 @@ try:
 
         body.reset()
 
-except Exception as e:
-    print(e)
-    
 
-body.close()
+if __name__ == '__main__':
+    script.run(simple_walking)
