@@ -30,34 +30,31 @@
 #define MOVE_BY 3
 #define READ_ORIENT 4
 
-
+/* Joint class */
+/* encapsulates details of joint motors */
 class Joint {
-  uint8_t _pin;
-  float _zeroPulse;
-  bool _positive;
+  const uint8_t _pin;
+  const float _zeroPulse;
+  const bool _positive;
   float _currentPosition;
   static Adafruit_PWMServoDriver _pwm;
 
   public:
-    Joint(uint8_t pin, float zeroPulse, bool positive) {
-      _pin = pin;
-      _zeroPulse = zeroPulse;
-      _positive = positive; 
+    Joint(uint8_t pin, float zeroPulse, bool positive) : 
+      _pin(pin),
+      _zeroPulse(zeroPulse),
+      _positive(positive) {
       _currentPosition = 0;  
     }
 
     void moveTo(float degree) { 
-      if (_pin == UINT8_MAX) return; //not initialized
-      
       float pulse = degree * DEGTOSEC / PULSELEN;
       if (!_positive) pulse *= -1;
-      
       pulse += _zeroPulse;
   
       if (pulse < SERVOMIN || pulse > SERVOMAX) return;
 
       _currentPosition = degree;
-  
       _pwm.setPWM(_pin, 0, pulse);
     }
 
@@ -72,6 +69,7 @@ class Joint {
 };
 
 Adafruit_PWMServoDriver Joint::_pwm = Adafruit_PWMServoDriver();
+
 
 SoftwareSerial bluetooth(11, 10); // RX, TX
 Adafruit_BNO055 bno = Adafruit_BNO055(55);
@@ -167,5 +165,5 @@ void loop() {
     }
   }
 
-  delay(50);
+  delay(1);
 }

@@ -27,7 +27,7 @@ def simple_walking():
         body.moveBy(body.SE1, -10)
         body.moveBy(body.SE2, 10)
 
-        sleep(0.7)
+        sleep(0.4)
 
         body.reset()
 
