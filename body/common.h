@@ -1,3 +1,6 @@
+#ifndef COMMON_H
+#define COMMON_H
+
 #include <SoftwareSerial.h>
 #include <Adafruit_PWMServoDriver.h>
 #include <Adafruit_Sensor.h>
@@ -34,3 +37,4 @@
 #define MOVE_BY 3
 #define READ_ORIENTATION 4
 
+#endif

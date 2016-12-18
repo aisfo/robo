@@ -1,8 +1,9 @@
+#ifndef JOINT_H
+#define JOINT_H
+
 #include "common.h"
 
 
-/* Joint class */
-/* encapsulates details of joint motors */
 class Joint {
   
   const uint8_t pin;
@@ -17,3 +18,4 @@ class Joint {
     
 };
 
+#endif
