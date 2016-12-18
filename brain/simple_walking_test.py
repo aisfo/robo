@@ -1,36 +1,34 @@
 from time import sleep
+import driver
 
-import script
-import body
 
-def simple_walking():
-    body.reset()
+def simple_walking(robot):
+    robot.reset()
     
     for i in range(0,2):
-
         sleep(0.2)
 
-        body.moveBy(body.SE1, -10)
-        body.moveBy(body.SE2, 10)
+        robot.moveBy(driver.SE1, -10)
+        robot.moveBy(driver.SE2, 10)
 
-        body.moveBy(body.NE1, 20)
-        body.moveBy(body.NE2, -10)
-
-        sleep(0.4)
-
-        body.moveBy(body.SW1, -20)
-        body.moveBy(body.SW2, 20)
-
-        body.moveBy(body.NW1, 30)
-        body.moveBy(body.NW2, -20)
-
-        body.moveBy(body.SE1, -10)
-        body.moveBy(body.SE2, 10)
+        robot.moveBy(driver.NE1, 20)
+        robot.moveBy(driver.NE2, -10)
 
         sleep(0.4)
 
-        body.reset()
+        robot.moveBy(driver.SW1, -20)
+        robot.moveBy(driver.SW2, 20)
+
+        robot.moveBy(driver.NW1, 30)
+        robot.moveBy(driver.NW2, -20)
+
+        robot.moveBy(driver.SE1, -10)
+        robot.moveBy(driver.SE2, 10)
+
+        sleep(0.4)
+
+        robot.reset()
 
 
 if __name__ == '__main__':
-    script.run(simple_walking)
+    driver.run_script(simple_walking)

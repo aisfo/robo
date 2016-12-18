@@ -1,11 +1,12 @@
-import script
-import body
+import driver
 
-def read_orientation():
+
+def read_orientation(robot):
     while(True):
-        orientation = body.readOrientation()
+        orientation = robot.readOrientation()
         print(orientation)
 
+
 if __name__ == '__main__':
-    script.run(read_orientation)
+    driver.run_script(read_orientation)
 
