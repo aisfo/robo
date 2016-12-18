@@ -8,22 +8,22 @@ def simple_walking(robot):
     for i in range(0,2):
         sleep(0.2)
 
-        robot.moveBy(driver.SE1, -10)
-        robot.moveBy(driver.SE2, 10)
+        robot.moveBy(robot.get('SE1'), -10)
+        robot.moveBy(robot.get('SE2'), 10)
 
-        robot.moveBy(driver.NE1, 20)
-        robot.moveBy(driver.NE2, -10)
+        robot.moveBy(robot.get('NE1'), 20)
+        robot.moveBy(robot.get('NE2'), -10)
 
         sleep(0.4)
 
-        robot.moveBy(driver.SW1, -20)
-        robot.moveBy(driver.SW2, 20)
+        robot.moveBy(robot.get('SW1'), -20)
+        robot.moveBy(robot.get('SW2'), 20)
 
-        robot.moveBy(driver.NW1, 30)
-        robot.moveBy(driver.NW2, -20)
+        robot.moveBy(robot.get('NW1'), 30)
+        robot.moveBy(robot.get('NW2'), -20)
 
-        robot.moveBy(driver.SE1, -10)
-        robot.moveBy(driver.SE2, 10)
+        robot.moveBy(robot.get('SE1'), -10)
+        robot.moveBy(robot.get('SE2'), 10)
 
         sleep(0.4)
 

@@ -3,9 +3,8 @@
 
 
 Robot::Robot() 
-{
+{ }
 
-}
 
 void Robot::begin() 
 {
@@ -14,35 +13,38 @@ void Robot::begin()
   reset();
 }
 
+
 void Robot::reset() 
 {
-  joints[ne0].moveTo(0);
-  joints[ne1].moveTo(140);
-  joints[ne2].moveTo(-50);
+  joints[NE0].moveTo(pwm, 0);
+  joints[NE1].moveTo(pwm, 140);
+  joints[NE2].moveTo(pwm, -50);
 
-  joints[se0].moveTo(0);
-  joints[se1].moveTo(140);
-  joints[se2].moveTo(-50);
+  joints[SE0].moveTo(pwm, 0);
+  joints[SE1].moveTo(pwm, 140);
+  joints[SE2].moveTo(pwm, -50);
 
-  joints[sw0].moveTo(0);
-  joints[sw1].moveTo(140);
-  joints[sw2].moveTo(-50);
+  joints[SW0].moveTo(pwm, 0);
+  joints[SW1].moveTo(pwm, 140);
+  joints[SW2].moveTo(pwm, -50);
 
-  joints[nw0].moveTo(0);
-  joints[nw1].moveTo(140);
-  joints[nw2].moveTo(-50);
+  joints[NW0].moveTo(pwm, 0);
+  joints[NW1].moveTo(pwm, 140);
+  joints[NW2].moveTo(pwm, -50);
 }
+
 
 void Robot::moveTo(uint8_t jointId, float value) 
 {
   if (jointId < 0 || jointId > 11) return;
-  joints[jointId].moveTo(value);
+  joints[jointId].moveTo(pwm, value);
 }
+
 
 void Robot::moveBy(uint8_t jointId, float value) 
 {
   if (jointId < 0 || jointId > 11) return;
-  joints[jointId].moveBy(value);
+  joints[jointId].moveBy(pwm, value);
 }
 
 

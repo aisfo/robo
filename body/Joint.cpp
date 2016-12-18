@@ -1,28 +1,35 @@
 #include "Joint.h"
 
 
-Joint::Joint(Adafruit_PWMServoDriver pwm, uint8_t pin, float zeroPulse, bool positive) : 
-  _pwm(pwm), _pin(pin), _zeroPulse(zeroPulse), _positive(positive) 
-{
-  _currentPosition = 0;  
-}
+float pulseLen = 1000 / FREQUENCY / 4096;
 
 
-void Joint::moveTo(float degree) 
+Joint::Joint(uint8_t pin, float zeroPulse, bool positive) : 
+  pin(pin), 
+  zeroPulse(zeroPulse), 
+  positive(positive), 
+  currentPosition(0) 
+{ }
+
+
+void Joint::moveTo(Adafruit_PWMServoDriver pwm, float degree) 
 { 
-  float pulse = degree * DEGTOSEC / PULSELEN;
-  if (!_positive) pulse *= -1;
-  pulse += _zeroPulse;
+  float pulse = degree * DEGTOSEC / pulseLen;
+  
+  if (!positive) 
+    pulse *= -1;
+    
+  pulse += zeroPulse;
 
   if (pulse < SERVOMIN || pulse > SERVOMAX) return;
 
-  _currentPosition = degree;
-  _pwm.setPWM(_pin, 0, pulse);
+  currentPosition = degree;
+  pwm.setPWM(pin, 0, pulse);
 }
 
 
-void Joint::moveBy(float degree) 
+void Joint::moveBy(Adafruit_PWMServoDriver pwm, float degree) 
 { 
-  moveTo(_currentPosition + degree);
+  moveTo(pwm, currentPosition + degree);
 }
 

@@ -3,35 +3,22 @@ import signal
 import sys
 
 
-# Joint IDs
-
-NE0 = 0
-NE1 = 1
-NE2 = 2 
-SE0 = 3
-SE1 = 4
-SE2 = 5 
-SW0 = 6 
-SW1 = 7
-SW2 = 8 
-NW0 = 9
-NW1 = 10
-NW2 = 11
-
-RESET = 1
-MOVE_TO = 2
-MOVE_BY = 3
-READ_ORIENTATION = 4
 
 bd_addr = "20:15:07:02:05:92"
 port = 1
 
 
-
 class Robot():
 
     def __init__(self):
-        self.connection = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+        #self.connection = socket.socket(socket.AF_BLUETOOTH, socket.SOCK_STREAM, socket.BTPROTO_RFCOMM)
+        self.config = read_config()
+
+
+    def get(self, key):
+        if key in self.config:
+            return self.config[key]
+        return None
 
 
     # Connection
@@ -50,53 +37,66 @@ class Robot():
 
     def send(self, msg):
         log("Sending the message :: {}".format(msg))
-        msg += '\x04'
+        msg += '\n'
         connection.send(msg.encode())
 
 
     # Commands: 
 
-    # 0 RESET()
     def reset(self):
-        self.send("{0}".format(RESET))
+        # RESET()
+        self.send("{0}".format(self.get('RESET')))
 
 
-    # 1 MOVE_TO(joint_id, value)
     def moveTo(self, jointId, value):
-        self.send("{0} {1} {2}".format(MOVE_TO, jointId, value))
+        # MOVE_TO(joint_id, value)
+        self.send("{0} {1} {2}".format(self.get('MOVE_TO'), jointId, value))
 
 
-    # 2 MOVE_BY(joint_id, value)
     def moveBy(self, jointId, value):
-        self.send("{0} {1} {2}".format(MOVE_BY, jointId, value))
+        # MOVE_BY(joint_id, value)
+        self.send("{0} {1} {2}".format(self.get('MOVE_BY'), jointId, value))
 
 
-    # 4 READ_ORIENTATION()
     def readOrientation(self):
-        self.send("{0}".format(READ_ORIENTATION))
+        # READ_ORIENTATION()
+        self.send("{0}".format(self.get('READ_ORIENTATION')))
 
-        values = []
-        temp = ""
-        start = False
-
-        while(True):
-            data = self.connection.recv(1)
-            if data == b'\x02': # start of text
-                start = True
-            elif data == b'\x1f': # value separator 
-                values.append(temp)
-                temp = ""
-            elif data == b'\x03': # end of text
-                values.append(temp)
-                break
-            elif start:
-                temp += data.decode("utf-8")
-
-        return values
+        msg_string = readMessage(self.connection)
+        values = msg_string.split()
+        return {
+            roll: values[0],
+            pitch: values[1],
+            yaw: values[2]
+        }
 
 
 
 # Helpers
+
+def read_config():
+    config = {}
+    with open('../body/common.h') as f:
+      content = f.readlines()
+      for line in content:
+        line = line.split()
+        if len(line) >= 3 and line[0] == "#define":
+          key = line[1]
+          value = line[2]
+          config[key] = value
+
+    return config
+
+
+def readMessage(conn):
+    msg_string = ""
+    while(True):
+        data = self.connection.recv(1).decode("utf-8")
+        if data == '\n':
+            return msg_string
+        else:
+            msg_string += data
+
 
 def log(msg, level="LOG"):
     print("DRIVER {0} :: {1}".format(level, msg))
@@ -118,5 +118,7 @@ def run_script(script_to_run):
         print(e)
 
     exit(None, None)
+
+
 
 
